@@ -11,4 +11,6 @@ public interface ISaveService {
     SaveResponse saveJob(SaveRequest saveJobRequestDTO);
     List<JobResponse> getSavedJobs(Long candidateId);
 
+    // XÓA TRONG SAVE
+    void DeleteSaveJob(Long CandidateId, Long JobId);
 }

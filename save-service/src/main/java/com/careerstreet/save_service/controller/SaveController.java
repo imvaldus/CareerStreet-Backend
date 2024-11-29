@@ -43,4 +43,25 @@ public class SaveController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    //    XÓA TRONG DANH SÁCH SAVE
+    @DeleteMapping("/delete/{CandidateId}/{JobId}")
+    public ResponseEntity<ApiResponse<Void>> DeleteSaveJob(
+            @PathVariable Long CandidateId,
+            @PathVariable Long JobId
+    ) {
+        try {
+            saveService.DeleteSaveJob(CandidateId, JobId);
+            ApiResponse<Void> apiResponse = new ApiResponse<>(
+                    GlobalCode.SUCCESS, "Xóa thành công", null
+            );
+            return ResponseEntity.ok(apiResponse);
+
+        } catch (Exception e) {
+            ApiResponse<Void> apiResponse = new ApiResponse<>(
+                    GlobalCode.ERROR_ID_EXIST, "Lỗi không xóa được", null
+            );
+            return ResponseEntity.badRequest().body(apiResponse);
+        }
+    }
 }
+

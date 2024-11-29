@@ -163,6 +163,7 @@ public class GatewayConfig {
                 .route("save-service", r->r.path(
                                 Constants.SAVE_PREFIX+"/create"
                         ,Constants.SAVE_PREFIX+"/{candidateId}"
+                        ,Constants.SAVE_PREFIX+"/delete/{candidateId}/{JobId}"
                         ).and()
                         .method(HttpMethod.GET, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PUT)
                         //.filters(f -> f.filter(applyJwtAuthentication(allowedRoles)))

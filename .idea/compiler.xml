@@ -22,19 +22,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="admin-service" target="19" />
       <module name="api-gateway" target="19" />
-      <module name="apigateway" target="19" />
-      <module name="apply-service" target="19" />
-      <module name="candidate-service" target="19" />
-      <module name="discovery-server" target="19" />
-      <module name="employer-service" target="19" />
-      <module name="file-service" target="19" />
-      <module name="job-service" target="19" />
-      <module name="notification-service" target="19" />
-      <module name="save-service" target="19" />
-      <module name="tech-service" target="19" />
-      <module name="user-service" target="19" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
