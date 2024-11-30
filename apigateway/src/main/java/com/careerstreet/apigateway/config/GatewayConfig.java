@@ -88,15 +88,20 @@ public class GatewayConfig {
                         .uri("lb://employer-service"))
 
                 // Admin+Blog route
-                .route("admin-service", r->r.path(
-                                Constants.ADMIN_PREFIX+"/create"
-                                    ,Constants.ADMIN_PREFIX+"/getbyusername/{username}"
-                        // BLOG
-                                ,Constants.BLOG_PREFIX+ "/create"
-                        ).and()
+                .route("admin-service", r -> r.path(
+                                // Admin routes
+                                Constants.ADMIN_PREFIX + "/create",
+                                Constants.ADMIN_PREFIX + "/getbyusername/{username}",
+                                // Blog routes
+                                Constants.BLOG_PREFIX + "/create",
+                                Constants.BLOG_PREFIX + "/list/all",
+                                Constants.BLOG_PREFIX + "/{blogId}",
+                                Constants.BLOG_PREFIX + "/update/{blogId}",
+                                Constants.BLOG_PREFIX + "/admin/{adminId}"
+                        )
+                        .and()
                         .method(HttpMethod.GET, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PUT)
-                        //.filters(f -> f.filter(applyJwtAuthentication(allowedRoles)))
-                        .uri("lb://admin-service"))
+                        .uri("lb://admin-service")) // Load Balancer đến admin-service
 
                 // Job+Level route
                 .route("job-service", r->r.path(
