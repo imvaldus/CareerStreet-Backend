@@ -11,9 +11,11 @@ public interface BlogService {
 
     BlogResponse updateBlog(BlogRequest blogRequest, Long blogId);
 
-//    CandidateResponse createCandidate(CandidateRequest candidateRequest);
-//    CandidateResponse updateCandidateById(CandidateRequest candidateRequest, Long candidateId);
-//
-//    CandidateResponse getCandidateByUserName(String uername);
-//    List<CandidateResponse> getAllCandidate();
+    BlogResponse getBlogById(Long blogId);
+
+    List<BlogResponse> getAllBlogs();
+
+    List<BlogResponse> getBlogsByAdminId(Long adminId);
+
+    void deleteBlog(Long blogId);
 }
