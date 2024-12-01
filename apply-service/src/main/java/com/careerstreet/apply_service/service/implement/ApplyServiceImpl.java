@@ -13,6 +13,7 @@ import com.careerstreet.event.NotificationEvent;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -204,4 +205,8 @@ public class ApplyServiceImpl implements ApplyService {
         return listResponse;
     }
 
+    @Override
+    public Long countApplicationsByJobId(Long jobId) {
+        return applyRepository.countByJobId(jobId);
+    }
 }
