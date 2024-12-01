@@ -140,16 +140,16 @@ public class AccountServiceImpl implements AccountService {
         return list;
     }
     @Override
-    public AccountRes updateIsActive(String username, boolean isActive) {
+    public boolean updateIsActive(String username, boolean isActive) {
         Account account = accountRepository.findAccountByUsername(username);
         // Cập nhật trạng thái ứng tuyển
         account.setActive(isActive);
 
         // Lưu lại thay đổi trạng thái vào cơ sở dữ liệu
         account = accountRepository.save(account);
-
-        // Chuyển đổi đối tượng Apply sang ApplyResponse
-        AccountRes accountRes = modelMapper.map(account, AccountRes.class);
-        return accountRes;
+//
+//        // Chuyển đổi đối tượng Apply sang ApplyResponse
+//        AccountRes accountRes = modelMapper.map(account, AccountRes.class);
+        return account.isActive();
     }
 }

@@ -63,5 +63,12 @@ public class SaveService implements ISaveService {
      }
 
 
+    // XÓA TRONG SAVE
+    @Override
+    public void DeleteSaveJob(Long CandidateId, Long JobId) {
+        Save save = saveRepository.findByCandidateIdAndJobId(CandidateId, JobId)
+                .orElseThrow(() -> new IllegalArgumentException("Saved job not found"));
+        saveRepository.delete(save);
+    }
 
 }

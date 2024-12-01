@@ -3,6 +3,7 @@ package com.careerstreet.job_service.controller;
 import com.careerstreet.job_service.dto.ApiResponse;
 import com.careerstreet.job_service.dto.LevelRequest;
 import com.careerstreet.job_service.dto.LevelResponse;
+import com.careerstreet.job_service.entity.Level;
 import com.careerstreet.job_service.exception.GlobalCode;
 import com.careerstreet.job_service.service.LevelService;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +29,23 @@ public class LevelController {
     @GetMapping("getall")
     public ResponseEntity<ApiResponse<LevelResponse>> getLevel(){
         // Log khi lấy thông tin CV
-        System.out.println("Lấy tat ca thông tin job ");
+        System.out.println("Lấy tat ca thông tin level ");
         // Gọi service để lấy CV
         List<LevelResponse> list = levelService.getAllLevel();
 
         // Tạo response với thông báo thành công
         ApiResponse apiResponse = new ApiResponse<>(GlobalCode.SUCCESS, "Danh sach tat ca level", list);
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+    @GetMapping("get-level/{levelId}")
+    public ResponseEntity<ApiResponse<LevelResponse>> getLevelById(@PathVariable Long levelId){
+        // Log khi lấy thông tin CV
+        System.out.println("Lấy thông tin level");
+        // Gọi service để lấy CV
+        LevelResponse levelResponse = levelService.getLevelById(levelId);
+
+        // Tạo response với thông báo thành công
+        ApiResponse apiResponse = new ApiResponse<>(GlobalCode.SUCCESS, "Chi tiet level", levelResponse);
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }
