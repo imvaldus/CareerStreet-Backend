@@ -14,4 +14,5 @@ public interface ApplyRepository extends JpaRepository<Apply, Long> {
     Optional<Apply> findFirstByCandidateCvIdAndJobId(Long candidateCvId, Long jobId);
 
     List<ApplyResponse> findByJobId(Long jobId);
+    Long countByJobId(Long jobId);
 }

@@ -18,4 +18,5 @@ public interface ApplyService {
     boolean hasApplyForJob(Long candidateId, Long jobId);
     List<ApplyResponse> getListAppliesByEmployer(Long employerId);
     List<ApplyResponse> getListAppliesByCandidateCv(Long candidateCvId);
+    Long countApplicationsByJobId(Long jobId);
 }

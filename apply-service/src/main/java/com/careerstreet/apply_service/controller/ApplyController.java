@@ -8,12 +8,14 @@ import com.careerstreet.apply_service.exception.GlobalCode;
 //import com.careerstreet.apply_service.kafka.producer.ApplyKafkaProducer;
 import com.careerstreet.apply_service.service.ApplyService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/apply/")
@@ -112,5 +114,13 @@ public class ApplyController {
         List<ApplyResponse> list = applyService.getListAppliesByCandidateCv(candidateCvId);
         ApiResponse<List<ApplyResponse>> applyResponse = new ApiResponse<>(GlobalCode.SUCCESS, "Danh sach apply thuộc candidateCvId", list);
         return ResponseEntity.status(HttpStatus.OK).body(applyResponse);
+    }
+
+    @GetMapping("count/{jobId}")
+    public ResponseEntity<ApiResponse<Long>> getApplicationCount(@PathVariable Long jobId) {
+        log.info("Counting applications for jobId: {}", jobId);
+        Long count = applyService.countApplicationsByJobId(jobId);
+        ApiResponse<Long> apiResponse = new ApiResponse<>(GlobalCode.SUCCESS, "Số lượng đơn ứng tuyển", count);
+        return ResponseEntity.ok(apiResponse);
     }
 }
