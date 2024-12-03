@@ -117,7 +117,7 @@ public class ApplyController {
 
     @GetMapping("count/{jobId}")
     public ResponseEntity<ApiResponse<Long>> getApplicationCount(@PathVariable Long jobId) {
-        log.info("Counting applications for jobId: {}", jobId);
+//        log.info("Counting applications for jobId: {}", jobId);
         Long count = applyService.countApplicationsByJobId(jobId);
         ApiResponse<Long> apiResponse = new ApiResponse<>(GlobalCode.SUCCESS, "Số lượng đơn ứng tuyển", count);
         return ResponseEntity.ok(apiResponse);
