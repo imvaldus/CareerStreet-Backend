@@ -20,6 +20,8 @@ public interface JobRepository extends JpaRepository<Job, Long > {
 
     // Method tìm kiếm tất cả các job có expirationDate nhỏ hơn ngày hiện tại
     List<Job> findByExpirationDateBefore(LocalDate currentDate);
+    // Tìm các công việc có ngày hết hạn nằm trong khoảng từ ngày hiện tại đến 2 ngày tới
+    List<Job> findByExpirationDateBetween(LocalDate currentDate, LocalDate notifyDate);
 
     @Query("SELECT j FROM Job j WHERE " +
             "(:title IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :title, '%'))) AND " +

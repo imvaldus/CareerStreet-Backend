@@ -1,6 +1,7 @@
 package com.careerstreet.job_service.service.implement;
 
-import com.careerstreet.job_service.client.CandidateCv;
+import com.careerstreet.event.NotificationEvent;
+import com.careerstreet.job_service.client.CandidateCvClient;
 import com.careerstreet.job_service.client.EmployerClient;
 import com.careerstreet.job_service.client.SaveClient;
 import com.careerstreet.job_service.dto.*;
@@ -10,12 +11,12 @@ import com.careerstreet.job_service.exception.EntityNotFoundException;
 import com.careerstreet.job_service.exception.GlobalCode;
 import com.careerstreet.job_service.repository.JobRepository;
 import com.careerstreet.job_service.repository.LevelRepository;
-import com.careerstreet.job_service.service.EmailService;
 import com.careerstreet.job_service.service.JobService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +30,12 @@ public class JobServiceImpl implements JobService {
     private final JobRepository jobRepository;
     private final LevelRepository levelRepository;
     private final ModelMapper modelMapper;
-    private final CandidateCv candidateCvClient;
-    private final EmailService emailService;
+    private final CandidateCvClient candidateCvClient;
     private final EmployerClient employerClient;
     private final SaveClient saveClient;
+
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
     @Override
     public JobResponse createJob(JobRequest jobRequest){
         Level level = levelRepository.findById(jobRequest.getLevelId())
@@ -285,11 +288,16 @@ public class JobServiceImpl implements JobService {
 
 //    DANH SÁCH CÔNG VIỆC ĐÃ LƯU HẾT HẠN
 
-    @Scheduled(cron = "0 0 2 * * *")
+//    @Scheduled(cron = "*/10 * * * * *") 10s
+    @Scheduled(cron = "0 0 2 * * *") // 2h sang moi ngay
     public void CheckExpiredSaveJob() {
         try {
             LocalDate currentDate = LocalDate.now();
-            List<Job> ExpiredJobs = jobRepository.findByExpirationDateBefore(currentDate);
+            LocalDate notifyDate = currentDate.plusDays(2); // Thời điểm thông báo trước 2 ngày
+
+            // Lấy danh sách công việc hết hạn trong 2 ngày tới
+            List<Job> ExpiredJobs = jobRepository.findByExpirationDateBetween(currentDate, notifyDate);
+
 
             for (Job expiredJob : ExpiredJobs) {
                 try {
@@ -304,9 +312,10 @@ public class JobServiceImpl implements JobService {
 
                            System.out.println("candidate CV" + candidateCv);
                             if (candidateCv != null && candidateCv.getData() != null) {
-                                String candidateEmail = candidateCv.getData().getEmail();
+                                // Khởi tạo thông tin  notification
+                                NotificationEvent notificationEvent = new NotificationEvent();
                                 String candidateName = candidateCv.getData().getFullName();
-                                System.out.println("candidateEmail = " + candidateEmail);
+                                System.out.println("candidateEmail = " + candidateCv.getData().getEmail());
                                 String subject = "Job Expiration Notification";
                                 String message = String.format("""
                                                 Dear %s,
@@ -318,9 +327,13 @@ public class JobServiceImpl implements JobService {
                                                 CareerStreet Team""",
                                         candidateName,
                                         expiredJob.getTitle());
-
-                                emailService.sendEmail(candidateEmail, subject, message);
-                                System.out.println("Sent notification to: " + candidateEmail);
+                                notificationEvent.setRecipient(candidateCv.getData().getEmail());
+                                notificationEvent.setSubject(subject);
+                                notificationEvent.setMsgBody(message);
+                                // Gửi notification qua Kafka
+                                kafkaTemplate.send("notification-SavedJobExpiry-topic", notificationEvent);
+//                                emailService.sendEmail(candidateEmail, subject, message);
+                                System.out.println("Sent notification to: " + candidateCv.getData().getEmail());
                             }
                         }
                     }
