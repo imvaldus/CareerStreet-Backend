@@ -15,4 +15,5 @@ public interface CandidateService {
 
     Long getCandidateIdByUsername(String username);
 
+
 }

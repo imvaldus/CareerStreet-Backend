@@ -82,4 +82,7 @@ public class CandidateServiceImpl implements CandidateService {
                 .collect(Collectors.toList());
 
     }
+
+
+
 }

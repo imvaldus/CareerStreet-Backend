@@ -1,21 +1,25 @@
 package com.careerstreet.job_service.service.implement;
 
+import com.careerstreet.job_service.client.CandidateCv;
 import com.careerstreet.job_service.client.EmployerClient;
-import com.careerstreet.job_service.dto.EmployerResponse;
-import com.careerstreet.job_service.dto.JobRequest;
-import com.careerstreet.job_service.dto.JobResponse;
+import com.careerstreet.job_service.client.SaveClient;
+import com.careerstreet.job_service.dto.*;
 import com.careerstreet.job_service.entity.Job;
 import com.careerstreet.job_service.entity.Level;
 import com.careerstreet.job_service.exception.EntityNotFoundException;
 import com.careerstreet.job_service.exception.GlobalCode;
 import com.careerstreet.job_service.repository.JobRepository;
 import com.careerstreet.job_service.repository.LevelRepository;
+import com.careerstreet.job_service.service.EmailService;
 import com.careerstreet.job_service.service.JobService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,9 +29,10 @@ public class JobServiceImpl implements JobService {
     private final JobRepository jobRepository;
     private final LevelRepository levelRepository;
     private final ModelMapper modelMapper;
-
+    private final CandidateCv candidateCvClient;
+    private final EmailService emailService;
     private final EmployerClient employerClient;
-
+    private final SaveClient saveClient;
     @Override
     public JobResponse createJob(JobRequest jobRequest){
         Level level = levelRepository.findById(jobRequest.getLevelId())
@@ -276,5 +281,58 @@ public class JobServiceImpl implements JobService {
                     return response;
                 } )
                 .collect(Collectors.toList());
+    }
+
+//    DANH SÁCH CÔNG VIỆC ĐÃ LƯU HẾT HẠN
+
+    @Scheduled(cron = "0 0 2 * * *")
+    public void CheckExpiredSaveJob() {
+        try {
+            LocalDate currentDate = LocalDate.now();
+            List<Job> ExpiredJobs = jobRepository.findByExpirationDateBefore(currentDate);
+
+            for (Job expiredJob : ExpiredJobs) {
+                try {
+                    // Sử dụng API mới
+                    ApiResponse<List<SaveResponse>> response = saveClient.getSavesByJobId(expiredJob.getJobId());
+                    if (response != null && response.getData() != null) {
+                        List<SaveResponse> saves = response.getData();
+
+                        for (SaveResponse save : saves) {
+                           ApiResponse<CandidateCvResponse> candidateCv =
+                                    candidateCvClient.getCvById(save.getCandidateId());
+
+                           System.out.println("candidate CV" + candidateCv);
+                            if (candidateCv != null && candidateCv.getData() != null) {
+                                String candidateEmail = candidateCv.getData().getEmail();
+                                String candidateName = candidateCv.getData().getFullName();
+                                System.out.println("candidateEmail = " + candidateEmail);
+                                String subject = "Job Expiration Notification";
+                                String message = String.format("""
+                                                Dear %s,
+                                                                                
+                                                The job you saved titled '%s' has expired. 
+                                                Please check for other opportunities on our platform.
+                                                                                
+                                                Best regards,
+                                                CareerStreet Team""",
+                                        candidateName,
+                                        expiredJob.getTitle());
+
+                                emailService.sendEmail(candidateEmail, subject, message);
+                                System.out.println("Sent notification to: " + candidateEmail);
+                            }
+                        }
+                    }
+
+                    updateStatusExpiration(expiredJob.getJobId());
+
+                } catch (Exception e) {
+                    System.err.println("Error processing job " + expiredJob.getJobId() + ": " + e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -24,7 +24,7 @@ public class CandidateCvController {
     @PostMapping("create")
 //    @PostMapping(value = "create", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<ApiResponse<CandidateCvResponse>> createCv(
-            @RequestPart(name = "file",required = false) MultipartFile file,
+            @RequestPart(name = "file", required = false) MultipartFile file,
             @RequestPart(name = "data") CandidateCvRequest candidateCvRequest) { // Chú ý sử dụng @ModelAttribute
         System.out.println("Thông tin ứng viên: " + candidateCvRequest);
 
@@ -36,7 +36,7 @@ public class CandidateCvController {
 
         System.out.println("Bắt đầu tạo CV ứng viên...");
 
-        CandidateCvResponse candidateCvResponse = candidateCvService.createCv(candidateCvRequest,file);
+        CandidateCvResponse candidateCvResponse = candidateCvService.createCv(candidateCvRequest, file);
 
         // Tạo phản hồi API
         ApiResponse<CandidateCvResponse> apiResponse = new ApiResponse<>(GlobalCode.SUCCESS, "Tạo hồ sơ ứng viên thành công", candidateCvResponse);
@@ -46,12 +46,12 @@ public class CandidateCvController {
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<ApiResponse<CandidateCvResponse>> updateCv (
-            @RequestPart(name = "file",required = false) MultipartFile file,
+    public ResponseEntity<ApiResponse<CandidateCvResponse>> updateCv(
+            @RequestPart(name = "file", required = false) MultipartFile file,
             @RequestPart(name = "data") CandidateCvRequest candidateCvRequest,
-            @PathVariable Long id){
+            @PathVariable Long id) {
         System.out.println(" Cb cap nhat CV ung vien ");
-        CandidateCvResponse candidateCvResponse = candidateCvService.updateCv(candidateCvRequest,file, id);
+        CandidateCvResponse candidateCvResponse = candidateCvService.updateCv(candidateCvRequest, file, id);
 
         ApiResponse apiResponse = new ApiResponse<>(GlobalCode.SUCCESS, "Cap nhat cv ung vien thanh cong", candidateCvResponse);
         System.out.println("Cap nhat cv ung vien thanh cong rsp New");
