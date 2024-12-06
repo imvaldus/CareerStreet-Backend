@@ -2,6 +2,7 @@ package com.careerstreet.save_service.repository;
 
 import com.careerstreet.save_service.entity.Save;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,4 +14,8 @@ public interface SaveRepository extends JpaRepository<Save, Long> {
     void deleteByCandidateIdAndJobId(Long candidateId, Long jobId);
     boolean existsByCandidateIdAndJobId(Long candidateId, Long jobId);
     Optional<Save> findByCandidateIdAndJobId(Long candidateId, Long JobId);
+
+    @Query("SELECT DISTINCT s.candidateId FROM Save s")
+    List<Long> findDistinctCandidateIds();
+    List<Save> findByJobId(Long jobId);
 }

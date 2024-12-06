@@ -71,4 +71,12 @@ public class SaveService implements ISaveService {
         saveRepository.delete(save);
     }
 
+
+    @Override
+    public List<SaveResponse> GetListSaveBỵJobId (Long jobId) {
+        List<Save> saves = saveRepository.findByJobId(jobId);
+        return saves.stream()
+                .map(save->modelMapper.map(save,SaveResponse.class))
+                .collect(Collectors.toList());
+    }
 }
