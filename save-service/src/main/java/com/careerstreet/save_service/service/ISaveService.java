@@ -13,4 +13,6 @@ public interface ISaveService {
 
     // XÓA TRONG SAVE
     void DeleteSaveJob(Long CandidateId, Long JobId);
+
+    List<SaveResponse> GetListSaveBỵJobId(Long jobId);
 }

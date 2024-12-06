@@ -20,6 +20,7 @@ public interface JobRepository extends JpaRepository<Job, Long > {
 
     // Method tìm kiếm tất cả các job có expirationDate nhỏ hơn ngày hiện tại
     List<Job> findByExpirationDateBefore(LocalDate currentDate);
+
     @Query("SELECT j FROM Job j WHERE " +
             "(:title IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :title, '%'))) AND " +
             "(:location IS NULL OR LOWER(j.jobLocation) LIKE LOWER(CONCAT('%', :location, '%'))) AND " +
@@ -38,4 +39,7 @@ public interface JobRepository extends JpaRepository<Job, Long > {
             @Param("jobType") String jobType,
             @Param("jobRank") String jobRank,
             @Param("companyName") String companyName);
+
+
+
 }
