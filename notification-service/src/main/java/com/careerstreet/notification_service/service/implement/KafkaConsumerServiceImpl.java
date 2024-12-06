@@ -28,4 +28,10 @@ public class KafkaConsumerServiceImpl implements KafkaConsumerService {
         emailService.sendEmail(notificationEvent);
         System.out.println("Received message update status kafka: " + notificationEvent.getRecipient());
     }
+    @KafkaListener(topics = "notification-SavedJobExpiry-topic")
+    public void listenSavedJobExpiry(NotificationEvent notificationEvent) {
+        System.out.println("CB Received message Saved Job Expiry kafka (notification-SavedJobExpiry-topic): " + notificationEvent.getRecipient());
+        emailService.sendEmail(notificationEvent);
+        System.out.println("Received message Saved Job Expiry kafka(notification-SavedJobExpiry-topic): " + notificationEvent.getRecipient());
+    }
 }
