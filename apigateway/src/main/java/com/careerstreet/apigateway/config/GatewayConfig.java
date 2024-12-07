@@ -133,6 +133,7 @@ public class GatewayConfig {
                                 , Constants.APPLY_PREFIX + "/check-application"
                                 , Constants.APPLY_PREFIX + "/getAppliesByEmployerId/{employerId}"
                                 , Constants.APPLY_PREFIX + "/getAppliesByCandidateCv/{candidateCvId}"
+                                , Constants.APPLY_PREFIX + "/count/{jobId}"
                         ).and()
                         .method(HttpMethod.GET, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PUT)
                         //.filters(f -> f.filter(applyJwtAuthentication(allowedRoles)))
